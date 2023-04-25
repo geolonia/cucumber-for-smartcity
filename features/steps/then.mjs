@@ -10,7 +10,7 @@ Then(/^現在の座標は(.+?)であるべきである。$/, function(text) {
   assert.deepStrictEqual(current, expected)
 });
 
-Then(/そこには建物があるべきである。/, function() {
+Then(/そこには建物がある。/, function() {
   let result = false
 
   const current = getLocations(this).slice(-1)[0]
@@ -29,7 +29,7 @@ Then(/そこには建物があるべきである。/, function() {
   })
 })
 
-Then(/そこには建物があるべきではない。/, function() {
+Then(/そこには建物がない。/, function() {
   let result = false
 
   const current = getLocations(this).slice(-1)[0]
