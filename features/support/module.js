@@ -4,6 +4,15 @@ const { VectorTile } = require('mapbox-vector-tile')
 
 const defaultZoom = 14
 
+const addressToLngLat = async (address) => {
+  let lng = 0
+  let lat = 0
+
+
+
+  return [lng, lat]
+}
+
 /**
  * 緯度経度からタイル番号に変換する
  *
