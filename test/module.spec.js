@@ -70,7 +70,7 @@ describe('Tests for textToLngLat()', () => {
     assert.deepStrictEqual(lnglat, [2222.2222, 1111.1111])
   })
   it('should return lnglat as expected',  async () => {
-    const text = '現在位置は、「東京都千代田区丸の内1丁目」である'
+    const text = '現在位置は、「東京都千代田区丸の内1丁目1番1号」である'
     const lnglat = await textToLngLat(text)
 
     assert.deepStrictEqual(lnglat.length, 2);
