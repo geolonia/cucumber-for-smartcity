@@ -107,15 +107,20 @@ const getTile = async (tileUrl, x, y, z) => {
 }
 
 /**
- * テキストから緯度経度を抽出する
+ * テキストから緯度経度を抽出する。「」で囲われた住所があれば住所を緯度経度に変換する。
  * @param {*} text
  * @returns
  */
-const textToLngLat = (text) => {
+const textToLngLat = async (text) => {
   let match = []
 
   let lng = 0
   let lat = 0
+
+  const isAddress = getAddressFromText(text);
+  if (isAddress) {
+    return  await addressToLngLat(isAddress)
+  }
 
   match = text.match(/緯度.*?(\-?[0-9]+\.?[0-9]+).*?経度.*?(\-?[0-9]+\.?[0-9]+)/)
   if (match) {

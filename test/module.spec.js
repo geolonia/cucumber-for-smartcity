@@ -21,53 +21,61 @@ describe('Tests for getTile()', () => {
 })
 
 describe('Tests for textToLngLat()', () => {
-  it('should return lnglat as expected', () => {
+  it('should return lnglat as expected',  async () => {
     const text = '現在位置は、緯度 "1111" 経度 "2222" である'
-    const lnglat = textToLngLat(text)
+    const lnglat = await textToLngLat(text)
 
     assert.deepStrictEqual(lnglat, [2222, 1111])
   })
-  it('should return lnglat as expected', () => {
+  it('should return lnglat as expected',  async () => {
     const text = '現在位置は、緯度 "1111.1111" 経度 "2222.2222" である'
-    const lnglat = textToLngLat(text)
+    const lnglat = await textToLngLat(text)
 
     assert.deepStrictEqual(lnglat, [2222.2222, 1111.1111])
   })
-  it('should return lnglat as expected', () => {
+  it('should return lnglat as expected',  async () => {
     const text = '現在位置は緯度:"1111.1111"経度:"2222.2222"である'
-    const lnglat = textToLngLat(text)
+    const lnglat = await textToLngLat(text)
 
     assert.deepStrictEqual(lnglat, [2222.2222, 1111.1111])
   })
-  it('should return lnglat as expected', () => {
+  it('should return lnglat as expected',  async () => {
     const text = '現在位置は、緯度:1111.1111/経度:"2222.2222"である'
-    const lnglat = textToLngLat(text)
+    const lnglat = await textToLngLat(text)
 
     assert.deepStrictEqual(lnglat, [2222.2222, 1111.1111])
   })
-  it('should return lnglat as expected', () => {
+  it('should return lnglat as expected',  async () => {
     const text = '1111.1111/2222.2222'
-    const lnglat = textToLngLat(text)
+    const lnglat = await textToLngLat(text)
 
     assert.deepStrictEqual(lnglat, [2222.2222, 1111.1111])
   })
-  it('should return lnglat as expected', () => {
+  it('should return lnglat as expected',  async () => {
     const text = '緯度経度が1111.1111,2222.2222'
-    const lnglat = textToLngLat(text)
+    const lnglat = await textToLngLat(text)
 
     assert.deepStrictEqual(lnglat, [2222.2222, 1111.1111])
   })
-  it('should return lnglat as expected', () => {
+  it('should return lnglat as expected',  async () => {
     const text = '緯度経度が "1111.1111 / 2222.2222"'
-    const lnglat = textToLngLat(text)
+    const lnglat = await textToLngLat(text)
 
     assert.deepStrictEqual(lnglat, [2222.2222, 1111.1111])
   })
-  it('should return lnglat as expected', () => {
+  it('should return lnglat as expected',  async () => {
     const text = '現在位置は、1111.1111/2222.2222で高度は10mである'
-    const lnglat = textToLngLat(text)
+    const lnglat = await textToLngLat(text)
 
     assert.deepStrictEqual(lnglat, [2222.2222, 1111.1111])
+  })
+  it('should return lnglat as expected',  async () => {
+    const text = '現在位置は、「東京都千代田区丸の内1丁目」である'
+    const lnglat = await textToLngLat(text)
+
+    assert.deepStrictEqual(lnglat.length, 2);
+    assert.deepStrictEqual(typeof lnglat[0], 'number');
+    assert.deepStrictEqual(typeof lnglat[1], 'number');
   })
 })
 
