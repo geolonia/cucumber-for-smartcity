@@ -1,14 +1,44 @@
 const globalMercator = require('global-mercator')
 const axios = require('axios')
 const { VectorTile } = require('mapbox-vector-tile')
+const { Location } = require("@aws-sdk/client-location");
 
 const defaultZoom = 14
 
+const locationService = new Location({
+  region: 'ap-northeast-1',
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
+});
+
+/**
+ * テキストから緯度経度を抽出する
+ *
+ * @param {string} text
+ * @returns {number[]} [lng, lat]
+ */
 const addressToLngLat = async (address) => {
   let lng = 0
   let lat = 0
 
+  const params = {
+    IndexName: 'bbd-for-smartcity',
+    Text: address,
+    Language: 'ja',
+  };
 
+  try {
+    const response = await locationService.searchPlaceIndexForText(params);
+    if (response.Results.length > 0) {
+      const coordinates = response.Results[0].Place.Geometry.Point;
+      lng = coordinates[0]
+      lat = coordinates[1]
+    } else {
+      console.log('No results found.');
+    }
+  } catch (error) {
+    console.error('Error: ', error);
+  }
 
   return [lng, lat]
 }
@@ -116,4 +146,5 @@ module.exports = {
   textToLngLat,
   addLocations,
   getLocations,
+  addressToLngLat,
 }
