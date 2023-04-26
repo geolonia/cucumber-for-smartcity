@@ -145,9 +145,12 @@ const getLocations = (object) => {
  * @param {*} text
  * @returns
  */
-const getAddressesFromText = (text) => {
-  const addresses = text.match(/「(.*?)」/)
-  return addresses
+const getAddressFromText = (text) => {
+  const address = text.match(/「(.*?)」/)
+  if (address) {
+    return address[1]
+  }
+  return ''
 }
 
 module.exports = {
@@ -157,5 +160,5 @@ module.exports = {
   addLocations,
   getLocations,
   addressToLngLat,
-  getAddressesFromText
+  getAddressFromText
 }
