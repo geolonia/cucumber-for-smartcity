@@ -140,6 +140,16 @@ const getLocations = (object) => {
   return object.locations
 }
 
+/**
+ * テキストから「」で囲われた住所を抽出する
+ * @param {*} text
+ * @returns
+ */
+const getAddressesFromText = (text) => {
+  const addresses = text.match(/「(.*?)」/)
+  return addresses
+}
+
 module.exports = {
   lnglatToTile,
   getTile,
@@ -147,4 +157,5 @@ module.exports = {
   addLocations,
   getLocations,
   addressToLngLat,
+  getAddressesFromText
 }
