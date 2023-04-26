@@ -102,6 +102,12 @@ describe('getAddressFromText', () => {
     assert.deepStrictEqual(result, '東京都千代田区丸の内1丁目');
   });
 
+  it('If there are multiple addresses enclosed in 「」, the first one should returned.', () => {
+    const text = '住所は、「和歌山県東牟婁串本町串本1丁目」と「東京都千代田区丸の内1丁目」です';
+    const result = getAddressFromText(text);
+    assert.deepStrictEqual(result, '和歌山県東牟婁串本町串本1丁目');
+  });
+
   it('should return null when no address is found', () => {
     const text = '本文に住所はありません';
     const result = getAddressFromText(text);
