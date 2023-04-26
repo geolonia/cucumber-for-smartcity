@@ -128,7 +128,7 @@ const getTakamatsuHazard = (lng, lat) => {
   return getTile(tileUrl, ...tile, header)
     .then((geojsons) => {
 
-      const features = []
+      const properties = []
 
       for (let i = 0; i < geojsons.length; i++) {
         const geojson = geojsons[i]
@@ -144,11 +144,11 @@ const getTakamatsuHazard = (lng, lat) => {
         const polygon = turf.polygon(feature.geometry.coordinates)
 
         if(turf.booleanPointInPolygon(point, polygon)) {
-          features.push(feature)
+          properties.push(feature.properties)
         }
       }
 
-      return features
+      return properties
     })
 }
 
