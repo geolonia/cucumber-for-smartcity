@@ -1,5 +1,5 @@
 const assert = require('assert')
-const { lnglatToTile, getTile, textToLngLat } = require('../features/support/module')
+const { lnglatToTile, getTile, textToLngLat, addressToLngLat } = require('../features/support/module')
 
 describe('Tests for lnglatToTile()', () => {
   it('should return tile number as expected', () => {
@@ -71,3 +71,18 @@ describe('Tests for textToLngLat()', () => {
   })
 })
 
+describe('Tests for addressToLngLat()', () => {
+  it('valid address returns correct lng/lat', async () => {
+    const result = await addressToLngLat('東京都千代田区丸の内1丁目');
+
+    assert.deepStrictEqual(result.length, 2);
+    assert.deepStrictEqual(typeof result[0], 'number');
+    assert.deepStrictEqual(typeof result[1], 'number');
+  });
+
+  it('non-existent address returns empty result', async () => {
+    const expected = [0, 0];
+    const result = await addressToLngLat('This address does not exist');
+    assert.deepStrictEqual(result, expected);
+  });
+});
