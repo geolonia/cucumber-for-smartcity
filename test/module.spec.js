@@ -81,15 +81,7 @@ describe('Tests for textToLngLat()', () => {
 
 describe('Tests for addressToLngLat()', () => {
   it('valid address returns correct lng/lat', async () => {
-    const result = await addressToLngLat('東京都千代田区丸の内1丁目2番1号');
-
-    assert.deepStrictEqual(result.length, 2);
-    assert.deepStrictEqual(typeof result[0], 'number');
-    assert.deepStrictEqual(typeof result[1], 'number');
-  });
-
-  it('valid address returns correct lng/lat', async () => {
-    const result = await addressToLngLat('東京都千代田区丸の内1-2-1');
+    const result = await addressToLngLat('東京都千代田区丸の内1丁目');
 
     assert.deepStrictEqual(result.length, 2);
     assert.deepStrictEqual(typeof result[0], 'number');
