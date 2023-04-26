@@ -146,12 +146,19 @@ const getLocations = (object) => {
 }
 
 /**
- * テキストから「」で囲われた住所を抽出する
+ * テキストから「」もしくは、"" で囲われた住所を抽出する
  * @param {*} text
  * @returns
  */
 const getAddressFromText = (text) => {
-  const address = text.match(/「(.*?)」/)
+
+  const address = text.match(/「(.*?)」/) || text.match(/"(.*?)"/)
+
+  const isLonLat = text.match(/,|\/|緯度|経度/)
+  if (isLonLat) {
+    return ''
+  }
+
   if (address) {
     return address[1]
   }

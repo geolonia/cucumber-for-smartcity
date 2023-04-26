@@ -105,19 +105,55 @@ describe('Tests for addressToLngLat()', () => {
 
 describe('getAddressFromText', () => {
   it('should return an array with the address surrounded by 「」', () => {
-    const text = '住所は「東京都千代田区丸の内1丁目1番1号」です';
+    const text = '現在位置は、「東京都千代田区丸の内1丁目1番1号」である';
+    const result = getAddressFromText(text);
+    assert.deepStrictEqual(result, '東京都千代田区丸の内1丁目1番1号');
+  });
+
+  it('should return an array with the address surrounded by double quotation', () => {
+    const text = '現在位置は、 "東京都千代田区丸の内1丁目1番1号" である';
     const result = getAddressFromText(text);
     assert.deepStrictEqual(result, '東京都千代田区丸の内1丁目1番1号');
   });
 
   it('If there are multiple addresses enclosed in 「」, the first one should returned.', () => {
-    const text = '住所は、「和歌山県東牟婁串本町串本1丁目1番1号」と「東京都千代田区丸の内1丁目」です';
+    const text = '現在位置は、「和歌山県東牟婁串本町串本1丁目1番1号」と「東京都千代田区丸の内1丁目」である';
     const result = getAddressFromText(text);
     assert.deepStrictEqual(result, '和歌山県東牟婁串本町串本1丁目1番1号');
   });
 
-  it('should return null when no address is found', () => {
+  it('should return \'\' when no address is found', () => {
     const text = '本文に住所はありません';
+    const result = getAddressFromText(text);
+    assert.strictEqual(result, '');
+  });
+
+  it('should return \'\' when no address is found', () => {
+    const text = '現在位置は、「1111.1111,2222.2222」 である'
+    const result = getAddressFromText(text);
+    assert.strictEqual(result, '');
+  });
+
+  it('should return \'\' when no address is found', () => {
+    const text = '現在位置は、"1111.1111,2222.2222" である'
+    const result = getAddressFromText(text);
+    assert.strictEqual(result, '');
+  });
+
+  it('should return \'\' when no address is found', () => {
+    const text = '現在位置は、「1111.1111/2222.2222」 である'
+    const result = getAddressFromText(text);
+    assert.strictEqual(result, '');
+  });
+
+  it('should return \'\' when no address is found', () => {
+    const text = '現在位置は、"1111.1111/2222.2222" である'
+    const result = getAddressFromText(text);
+    assert.strictEqual(result, '');
+  });
+
+  it('should return \'\' when no address is found', () => {
+    const text = '現在位置は緯度:"1111.1111"経度:"2222.2222"である'
     const result = getAddressFromText(text);
     assert.strictEqual(result, '');
   });
