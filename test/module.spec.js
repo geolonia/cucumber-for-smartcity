@@ -81,7 +81,15 @@ describe('Tests for textToLngLat()', () => {
 
 describe('Tests for addressToLngLat()', () => {
   it('valid address returns correct lng/lat', async () => {
-    const result = await addressToLngLat('東京都千代田区丸の内1丁目');
+    const result = await addressToLngLat('東京都千代田区丸の内1丁目2番1号');
+
+    assert.deepStrictEqual(result.length, 2);
+    assert.deepStrictEqual(typeof result[0], 'number');
+    assert.deepStrictEqual(typeof result[1], 'number');
+  });
+
+  it('valid address returns correct lng/lat', async () => {
+    const result = await addressToLngLat('東京都千代田区丸の内1-2-1');
 
     assert.deepStrictEqual(result.length, 2);
     assert.deepStrictEqual(typeof result[0], 'number');
@@ -97,15 +105,15 @@ describe('Tests for addressToLngLat()', () => {
 
 describe('getAddressFromText', () => {
   it('should return an array with the address surrounded by 「」', () => {
-    const text = '住所は「東京都千代田区丸の内1丁目」です';
+    const text = '住所は「東京都千代田区丸の内1丁目1番1号」です';
     const result = getAddressFromText(text);
-    assert.deepStrictEqual(result, '東京都千代田区丸の内1丁目');
+    assert.deepStrictEqual(result, '東京都千代田区丸の内1丁目1番1号');
   });
 
   it('If there are multiple addresses enclosed in 「」, the first one should returned.', () => {
-    const text = '住所は、「和歌山県東牟婁串本町串本1丁目」と「東京都千代田区丸の内1丁目」です';
+    const text = '住所は、「和歌山県東牟婁串本町串本1丁目1番1号」と「東京都千代田区丸の内1丁目」です';
     const result = getAddressFromText(text);
-    assert.deepStrictEqual(result, '和歌山県東牟婁串本町串本1丁目');
+    assert.deepStrictEqual(result, '和歌山県東牟婁串本町串本1丁目1番1号');
   });
 
   it('should return null when no address is found', () => {
