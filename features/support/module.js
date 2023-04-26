@@ -12,7 +12,7 @@ const locationService = new Location({
 });
 
 /**
- * テキストから緯度経度を抽出する
+ * 住所を緯度経度に変換する
  *
  * @param {string} text
  * @returns {number[]} [lng, lat]
