@@ -1,5 +1,6 @@
 const globalMercator = require('global-mercator')
 const axios = require('axios')
+const turf = require('@turf/turf')
 const { VectorTile } = require('mapbox-vector-tile')
 const { Location } = require("@aws-sdk/client-location");
 
@@ -62,15 +63,16 @@ const lnglatToTile = (lng, lat, zoom = defaultZoom) => {
  * @param {*} x
  * @param {*} y
  * @param {*} z
+ * @param {*} option axios's option
  * @returns
  */
-const getTile = async (tileUrl, x, y, z) => {
+const getTile = async (tileUrl, x, y, z, option={}) => {
   const url = tileUrl.replace('{z}', String(z)).replace('{x}', String(x)).replace('{y}', String(y))
 
   let buffer
 
   try {
-    const res = await axios.get(url, { responseType: 'arraybuffer' })
+    const res = await axios.get(url, { responseType: 'arraybuffer', ...option})
     buffer = Buffer.from(res.data, 'binary')
   } catch (error) {
     throw new Error(error)
@@ -104,6 +106,50 @@ const getTile = async (tileUrl, x, y, z) => {
   }
 
   return features
+}
+
+/**
+ * 緯度経度から高松市のハザード情報を取得する
+ * @param {*} lng
+ * @param {*} lat
+ * @returns
+ */
+const getTakamatsuHazard = (lng, lat) => {
+
+  const header = {
+    headers: {
+      'Origin': 'http://localhost:3000',
+    },
+  }
+
+  const tile = lnglatToTile(lng, lat, 20)
+  const tileUrl = 'https://tileserver.geolonia.com/takamatsu-hazard_v3/tiles/{z}/{x}/{y}.pbf?key=YOUR-API-KEY'
+
+  return getTile(tileUrl, ...tile, header)
+    .then((geojsons) => {
+
+      const features = []
+
+      for (let i = 0; i < geojsons.length; i++) {
+        const geojson = geojsons[i]
+        const feature = geojson.features[0]
+
+        const isPolygonInvalid = feature.geometry.coordinates[0].length < 4
+
+        if (isPolygonInvalid) {
+          continue
+        }
+
+        const point = turf.point([lng, lat])
+        const polygon = turf.polygon(feature.geometry.coordinates)
+
+        if(turf.booleanPointInPolygon(point, polygon)) {
+          features.push(feature)
+        }
+      }
+
+      return features
+    })
 }
 
 /**
@@ -147,4 +193,5 @@ module.exports = {
   addLocations,
   getLocations,
   addressToLngLat,
+  getTakamatsuHazard,
 }

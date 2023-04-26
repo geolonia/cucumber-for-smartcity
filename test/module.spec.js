@@ -1,5 +1,5 @@
 const assert = require('assert')
-const { lnglatToTile, getTile, textToLngLat, addressToLngLat } = require('../features/support/module')
+const { lnglatToTile, getTile, textToLngLat, addressToLngLat, getTakamatsuHazard } = require('../features/support/module')
 
 describe('Tests for lnglatToTile()', () => {
   it('should return tile number as expected', () => {
@@ -86,3 +86,125 @@ describe('Tests for addressToLngLat()', () => {
     assert.deepStrictEqual(result, expected);
   });
 });
+
+describe('getTakamatsuHazard', () => {
+
+  it('should return expected feature', async () => {
+
+    const expected = [
+      {
+        "type": "Feature",
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                134.0555191040039,
+                34.356111121015545
+              ],
+              [
+                134.05561096966267,
+                34.35611070583673
+              ],
+              [
+                134.05561038292944,
+                34.35602054278951
+              ],
+              [
+                134.0555191040039,
+                34.35602095796875
+              ],
+              [
+                134.05551239848137,
+                34.35602095796875
+              ],
+              [
+                134.05551239848137,
+                34.356111121015545
+              ],
+              [
+                134.0555191040039,
+                34.356111121015545
+              ]
+            ]
+          ]
+        },
+        "properties": {
+          "suisin": 1.27,
+          "x": 51105,
+          "y": 150535,
+          "vt_layer": "高潮浸水想定区域図（想定最大規模）"
+        }
+      },
+      {
+        "type": "Feature",
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                134.0555191040039,
+                34.356111121015545
+              ],
+              [
+                134.05561096966267,
+                34.35611070583673
+              ],
+              [
+                134.05561038292944,
+                34.35602054278951
+              ],
+              [
+                134.0555191040039,
+                34.35602095796875
+              ],
+              [
+                134.05551239848137,
+                34.35602095796875
+              ],
+              [
+                134.05551239848137,
+                34.356111121015545
+              ],
+              [
+                134.0555191040039,
+                34.356111121015545
+              ]
+            ]
+          ]
+        },
+        "properties": {
+          "keizoku": 1,
+          "vt_layer": "高潮浸水想定区域図（浸水継続時間）"
+        }
+      }
+    ]
+
+    const lng = 134.0555496
+    const lat = 34.3560728
+
+    const result = await getTakamatsuHazard(lng, lat)
+    assert.deepStrictEqual(result, expected)
+  })
+
+  it('should return layers with expected layers', async () => {
+
+    const expected = [
+      "土砂災害警戒区域",
+      "急傾斜地崩壊危険区域",
+      "急傾斜地崩壊危険箇所",
+      "洪水浸水想定区域図（想定最大規模）",
+      "洪水浸水想定区域図（浸水継続時間）",
+      "高潮浸水想定区域図（想定最大規模）",
+      "高潮浸水想定区域図（浸水継続時間）"
+    ]
+
+    const lng = 134.0918781
+    const lat = 34.3598964
+
+    const res = await getTakamatsuHazard(lng, lat)
+    const result = res.map(feature => feature.properties.vt_layer)
+
+    assert.deepStrictEqual(result.sort(), expected.sort())
+  })
+})
