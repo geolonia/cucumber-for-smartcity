@@ -1,5 +1,5 @@
 const assert = require('assert')
-const { lnglatToTile, getTile, textToLngLat, addressToLngLat, getTakamatsuHazard } = require('../features/support/module')
+const { lnglatToTile, getTile, textToLngLat, addressToLngLat, getAddressFromText, getTakamatsuHazard } = require('../features/support/module')
 
 describe('Tests for lnglatToTile()', () => {
   it('should return tile number as expected', () => {
@@ -21,53 +21,61 @@ describe('Tests for getTile()', () => {
 })
 
 describe('Tests for textToLngLat()', () => {
-  it('should return lnglat as expected', () => {
+  it('should return lnglat as expected',  async () => {
     const text = '現在位置は、緯度 "1111" 経度 "2222" である'
-    const lnglat = textToLngLat(text)
+    const lnglat = await textToLngLat(text)
 
     assert.deepStrictEqual(lnglat, [2222, 1111])
   })
-  it('should return lnglat as expected', () => {
+  it('should return lnglat as expected',  async () => {
     const text = '現在位置は、緯度 "1111.1111" 経度 "2222.2222" である'
-    const lnglat = textToLngLat(text)
+    const lnglat = await textToLngLat(text)
 
     assert.deepStrictEqual(lnglat, [2222.2222, 1111.1111])
   })
-  it('should return lnglat as expected', () => {
+  it('should return lnglat as expected',  async () => {
     const text = '現在位置は緯度:"1111.1111"経度:"2222.2222"である'
-    const lnglat = textToLngLat(text)
+    const lnglat = await textToLngLat(text)
 
     assert.deepStrictEqual(lnglat, [2222.2222, 1111.1111])
   })
-  it('should return lnglat as expected', () => {
+  it('should return lnglat as expected',  async () => {
     const text = '現在位置は、緯度:1111.1111/経度:"2222.2222"である'
-    const lnglat = textToLngLat(text)
+    const lnglat = await textToLngLat(text)
 
     assert.deepStrictEqual(lnglat, [2222.2222, 1111.1111])
   })
-  it('should return lnglat as expected', () => {
+  it('should return lnglat as expected',  async () => {
     const text = '1111.1111/2222.2222'
-    const lnglat = textToLngLat(text)
+    const lnglat = await textToLngLat(text)
 
     assert.deepStrictEqual(lnglat, [2222.2222, 1111.1111])
   })
-  it('should return lnglat as expected', () => {
+  it('should return lnglat as expected',  async () => {
     const text = '緯度経度が1111.1111,2222.2222'
-    const lnglat = textToLngLat(text)
+    const lnglat = await textToLngLat(text)
 
     assert.deepStrictEqual(lnglat, [2222.2222, 1111.1111])
   })
-  it('should return lnglat as expected', () => {
+  it('should return lnglat as expected',  async () => {
     const text = '緯度経度が "1111.1111 / 2222.2222"'
-    const lnglat = textToLngLat(text)
+    const lnglat = await textToLngLat(text)
 
     assert.deepStrictEqual(lnglat, [2222.2222, 1111.1111])
   })
-  it('should return lnglat as expected', () => {
+  it('should return lnglat as expected',  async () => {
     const text = '現在位置は、1111.1111/2222.2222で高度は10mである'
-    const lnglat = textToLngLat(text)
+    const lnglat = await textToLngLat(text)
 
     assert.deepStrictEqual(lnglat, [2222.2222, 1111.1111])
+  })
+  it('should return lnglat as expected',  async () => {
+    const text = '現在位置は、「東京都千代田区丸の内1丁目1番1号」である'
+    const lnglat = await textToLngLat(text)
+
+    assert.deepStrictEqual(lnglat.length, 2);
+    assert.deepStrictEqual(typeof lnglat[0], 'number');
+    assert.deepStrictEqual(typeof lnglat[1], 'number');
   })
 })
 
@@ -132,3 +140,59 @@ describe('getTakamatsuHazard', () => {
     assert.deepStrictEqual(result.sort(), expected.sort())
   })
 })
+
+describe('getAddressFromText', () => {
+  it('should return an array with the address surrounded by 「」', () => {
+    const text = '現在位置は、「東京都千代田区丸の内1丁目1番1号」である';
+    const result = getAddressFromText(text);
+    assert.deepStrictEqual(result, '東京都千代田区丸の内1丁目1番1号');
+  });
+
+  it('should return an array with the address surrounded by double quotation', () => {
+    const text = '現在位置は、 "東京都千代田区丸の内1丁目1番1号" である';
+    const result = getAddressFromText(text);
+    assert.deepStrictEqual(result, '東京都千代田区丸の内1丁目1番1号');
+  });
+
+  it('If there are multiple addresses enclosed in 「」, the first one should returned.', () => {
+    const text = '現在位置は、「和歌山県東牟婁串本町串本1丁目1番1号」と「東京都千代田区丸の内1丁目」である';
+    const result = getAddressFromText(text);
+    assert.deepStrictEqual(result, '和歌山県東牟婁串本町串本1丁目1番1号');
+  });
+
+  it('should return \'\' when no address is found', () => {
+    const text = '本文に住所はありません';
+    const result = getAddressFromText(text);
+    assert.strictEqual(result, '');
+  });
+
+  it('should return \'\' when no address is found', () => {
+    const text = '現在位置は、「1111.1111,2222.2222」 である'
+    const result = getAddressFromText(text);
+    assert.strictEqual(result, '');
+  });
+
+  it('should return \'\' when no address is found', () => {
+    const text = '現在位置は、"1111.1111,2222.2222" である'
+    const result = getAddressFromText(text);
+    assert.strictEqual(result, '');
+  });
+
+  it('should return \'\' when no address is found', () => {
+    const text = '現在位置は、「1111.1111/2222.2222」 である'
+    const result = getAddressFromText(text);
+    assert.strictEqual(result, '');
+  });
+
+  it('should return \'\' when no address is found', () => {
+    const text = '現在位置は、"1111.1111/2222.2222" である'
+    const result = getAddressFromText(text);
+    assert.strictEqual(result, '');
+  });
+
+  it('should return \'\' when no address is found', () => {
+    const text = '現在位置は緯度:"1111.1111"経度:"2222.2222"である'
+    const result = getAddressFromText(text);
+    assert.strictEqual(result, '');
+  });
+});

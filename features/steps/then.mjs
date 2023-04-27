@@ -3,8 +3,8 @@ import { Then } from '@cucumber/cucumber'
 import { getLocations, textToLngLat, lnglatToTile, getTile } from '../support/module.js'
 import { geoContains } from 'd3-geo'
 
-Then(/^現在の座標は(.+?)であるべきである。$/, function(text) {
-  const expected = textToLngLat(text)
+Then(/^現在の座標は(.+?)であるべきである。$/, async function(text) {
+  const expected = await textToLngLat(text)
   const current = getLocations(this).slice(-1)[0]
 
   assert.deepStrictEqual(current, expected)
