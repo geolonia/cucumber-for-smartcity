@@ -19,9 +19,6 @@ const locationService = new Location({
  * @returns {number[]} [lng, lat]
  */
 const addressToLngLat = async (address) => {
-  let lng = 0
-  let lat = 0
-
   const params = {
     IndexName: 'bbd-for-smartcity',
     Text: address,
@@ -29,19 +26,15 @@ const addressToLngLat = async (address) => {
   };
 
   try {
-    const response = await locationService.searchPlaceIndexForText(params);
-    if (response.Results.length > 0) {
-      const coordinates = response.Results[0].Place.Geometry.Point;
-      lng = coordinates[0]
-      lat = coordinates[1]
+    const response = await locationService.searchPlaceIndexForText(params)
+    if (response.Results.length > 0 && response.Results[0].Relevance >= 1) {
+      return response.Results[0].Place.Geometry.Point;
     } else {
-      console.log('No results found.');
+      return []
     }
-  } catch (error) {
-    console.error('Error: ', error);
+  } catch(e) {
+    throw new Error(e)
   }
-
-  return [lng, lat]
 }
 
 /**
@@ -159,30 +152,30 @@ const getTakamatsuHazard = (lng, lat) => {
  */
 const textToLngLat = async (text) => {
   let match = []
-
-  let lng = 0
-  let lat = 0
+  let lnglat = []
 
   match = text.match(/緯度.*?(\-?[0-9]+\.?[0-9]+).*?経度.*?(\-?[0-9]+\.?[0-9]+)/)
   if (match) {
-    lng = match[2]
-    lat = match[1]
+    lnglat = [Number(match[2]), Number(match[1])]
   } else {
-    match = text.match(/.*?(\-?[0-9]+\.?[0-9]+).*?(\-?[0-9]+\.?[0-9]+)/)
+    match = text.match(/.*?(\-?[0-9]+\.?[0-9]+)\s*(\/|,)\s*(\-?[0-9]+\.?[0-9]+)/)
     if (match) {
-      lng = match[2]
-      lat = match[1]
+      lnglat = [Number(match[3]), Number(match[1])]
     }
   }
 
-  if (0 === lng && 0 === lat) {
-    const match = text.match(/「(.*?)」/) || text.match(/"(.*?)"/)
-    if (match) {
-      [lng, lat] = await addressToLngLat(match[1].trim())
+  if (! lnglat.length) {
+    try {
+      const match = text.match(/「(.*?)」/) || text.match(/"(.*?)"/)
+      if (match) {
+        lnglat = await addressToLngLat(match[1].trim())
+      }
+    } catch(e) {
+      lnglat = []
     }
   }
 
-  return [Number(lng), Number(lat)]
+  return lnglat
 }
 
 const addLocations = (object, lnglat) => {

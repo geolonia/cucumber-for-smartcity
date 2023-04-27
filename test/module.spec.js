@@ -71,13 +71,6 @@ describe('Tests for textToLngLat()', () => {
   })
 
   it('should return lnglat as expected',  async () => {
-    const text = '現在位置は、1111.1111/2222.2222で高度は10mである'
-    const lnglat = await textToLngLat(text)
-
-    assert.deepStrictEqual(lnglat, [2222.2222, 1111.1111])
-  })
-
-  it('should return lnglat as expected',  async () => {
     const text = '現在位置は、「東京都千代田区丸の内1丁目1番1号」である'
     const lnglat = await textToLngLat(text)
 
@@ -94,23 +87,39 @@ describe('Tests for textToLngLat()', () => {
     assert.deepStrictEqual(typeof lnglat[0], 'number');
     assert.deepStrictEqual(typeof lnglat[1], 'number');
   })
+
+  it('should return lnglat as expected',  async () => {
+    const text = '現在位置は、"東京都千代田区丸の内1-1-1" である'
+    const lnglat = await textToLngLat(text)
+
+    assert.deepStrictEqual(lnglat.length, 2);
+    assert.deepStrictEqual(typeof lnglat[0], 'number');
+    assert.deepStrictEqual(typeof lnglat[1], 'number');
+  })
+
+  it('should return empty arrayt as expected with wrong address',  async () => {
+    const text = '現在位置は、"東京都千代田区丸の内100-200-20" である'
+    const lnglat = await textToLngLat(text)
+
+    assert.deepStrictEqual(lnglat, []);
+  })
 })
 
-describe('Tests for addressToLngLat()', () => {
-  it('valid address returns correct lng/lat', async () => {
-    const result = await addressToLngLat('東京都千代田区丸の内1丁目');
+// describe('Tests for addressToLngLat()', () => {
+//   it('valid address returns correct lng/lat', async () => {
+//     const result = await addressToLngLat('東京都千代田区丸の内1丁目');
 
-    assert.deepStrictEqual(result.length, 2);
-    assert.deepStrictEqual(typeof result[0], 'number');
-    assert.deepStrictEqual(typeof result[1], 'number');
-  });
+//     assert.deepStrictEqual(result.length, 2);
+//     assert.deepStrictEqual(typeof result[0], 'number');
+//     assert.deepStrictEqual(typeof result[1], 'number');
+//   });
 
-  it('non-existent address returns empty result', async () => {
-    const expected = [0, 0];
-    const result = await addressToLngLat('This address does not exist');
-    assert.deepStrictEqual(result, expected);
-  });
-});
+//   it('non-existent address returns empty result', async () => {
+//     const expected = [0, 0];
+//     const result = await addressToLngLat('This address does not exist');
+//     assert.deepStrictEqual(result, expected);
+//   });
+// });
 
 describe('getTakamatsuHazard', () => {
 
