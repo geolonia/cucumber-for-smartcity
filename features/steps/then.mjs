@@ -1,6 +1,6 @@
 import assert, { rejects } from 'assert'
 import { Then } from '@cucumber/cucumber'
-import { getLocations, textToLngLat, lnglatToTile, getTile } from '../support/module.js'
+import { getLocations, textToLngLat, lnglatToTile, getTile, getTakamatsuHazard } from '../support/module.js'
 import { geoContains } from 'd3-geo'
 
 Then(/^現在の座標は(.+?)であるべきである。$/, async function(text) {
@@ -55,6 +55,42 @@ Then(/そこには建築?物がない。/, function() {
 
       if (true === result) {
         assert.fail('建築物があります。')
+      }
+    })
+  }
+})
+
+Then(/そこには災害リスクがある。/, function() {
+  let result = false
+
+  const current = getLocations(this).slice(-1)[0]
+
+  if (current.length) {
+    return getTakamatsuHazard(...current).then(array => {
+      if (array.length) {
+        result = true
+      }
+
+      if (false === result) {
+        assert.fail('災害リスクが見つかりませんでした。')
+      }
+    })
+  }
+})
+
+Then(/そこには災害リスクがない。/, function() {
+  let result = false
+
+  const current = getLocations(this).slice(-1)[0]
+
+  if (current.length) {
+    return getTakamatsuHazard(...current).then(array => {
+      if (array.length) {
+        result = true
+      }
+
+      if (true === result) {
+        assert.fail(JSON.stringify(array, null, '  '))
       }
     })
   }

@@ -107,7 +107,7 @@ const getTile = async (tileUrl, x, y, z, option={}) => {
  * @param {*} lat
  * @returns
  */
-const getTakamatsuHazard = (lng, lat) => {
+const getTakamatsuHazard = async (lng, lat) => {
 
   const header = {
     headers: {
@@ -118,31 +118,29 @@ const getTakamatsuHazard = (lng, lat) => {
   const tile = lnglatToTile(lng, lat, 20)
   const tileUrl = 'https://tileserver.geolonia.com/takamatsu-hazard_v3/tiles/{z}/{x}/{y}.pbf?key=YOUR-API-KEY'
 
-  return getTile(tileUrl, ...tile, header)
-    .then((geojsons) => {
+  const geojsons = await getTile(tileUrl, ...tile, header)
 
-      const properties = []
+  const properties = []
 
-      for (let i = 0; i < geojsons.length; i++) {
-        const geojson = geojsons[i]
-        const feature = geojson.features[0]
+  for (let i = 0; i < geojsons.length; i++) {
+    const geojson = geojsons[i]
+    const feature = geojson.features[0]
 
-        const isPolygonInvalid = feature.geometry.coordinates[0].length < 4
+    const isPolygonInvalid = feature.geometry.coordinates[0].length < 4
 
-        if (isPolygonInvalid) {
-          continue
-        }
+    if (isPolygonInvalid) {
+      continue
+    }
 
-        const point = turf.point([lng, lat])
-        const polygon = turf.polygon(feature.geometry.coordinates)
+    const point = turf.point([lng, lat])
+    const polygon = turf.polygon(feature.geometry.coordinates)
 
-        if(turf.booleanPointInPolygon(point, polygon)) {
-          properties.push(feature.properties)
-        }
-      }
+    if(turf.booleanPointInPolygon(point, polygon)) {
+      properties.push(feature.properties)
+    }
+  }
 
-      return properties
-    })
+  return properties
 }
 
 /**
