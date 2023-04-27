@@ -75,6 +75,8 @@ Then(/そこには災害リスクがある。/, function() {
         assert.fail('災害リスクが見つかりませんでした。')
       }
     })
+  } else {
+    assert.fail('場所を特定できませんでした。')
   }
 })
 
@@ -93,5 +95,7 @@ Then(/そこには災害リスクがない。/, function() {
         assert.fail(JSON.stringify(array, null, '  '))
       }
     })
+  } else {
+    assert.fail('場所を特定できませんでした。')
   }
 })
