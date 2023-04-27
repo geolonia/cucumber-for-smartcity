@@ -10,7 +10,7 @@ Then(/^現在の座標は(.+?)であるべきである。$/, async function(text
   assert.deepStrictEqual(current, expected)
 });
 
-Then(/そこには建物がある。/, function() {
+Then(/そこには建築物がある。/, function() {
   let result = false
 
   const current = getLocations(this).slice(-1)[0]
@@ -19,7 +19,7 @@ Then(/そこには建物がある。/, function() {
   return getTile('https://cyberjapandata.gsi.go.jp/xyz/optimal_bvmap-v1/{z}/{x}/{y}.pbf', ...tile).then(features => {
     for (let i = 0; i < features.length; i++) {
       if (geoContains(features[i], current)) {
-        if (features[i].features[0].properties.vt_code && 3102 === features[i].features[0].properties.vt_code) {
+        if (features[i].features[0].properties.vt_code && 3100 <= features[i].features[0].properties.vt_code && 4000 >= features[i].features[0].properties.vt_code) {
           result = true
         }
       }
@@ -29,7 +29,7 @@ Then(/そこには建物がある。/, function() {
   })
 })
 
-Then(/そこには建物がない。/, function() {
+Then(/そこには建築物がない。/, function() {
   let result = false
 
   const current = getLocations(this).slice(-1)[0]
@@ -38,7 +38,7 @@ Then(/そこには建物がない。/, function() {
   return getTile('https://cyberjapandata.gsi.go.jp/xyz/optimal_bvmap-v1/{z}/{x}/{y}.pbf', ...tile).then(features => {
     for (let i = 0; i < features.length; i++) {
       if (geoContains(features[i], current)) {
-        if (features[i].features[0].properties.vt_code && 3102 === features[i].features[0].properties.vt_code) {
+        if (features[i].features[0].properties.vt_code && 3100 <= features[i].features[0].properties.vt_code && 4000 >= features[i].features[0].properties.vt_code) {
           result = true
         }
       }
