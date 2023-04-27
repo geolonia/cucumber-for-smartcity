@@ -32,7 +32,7 @@ Then(/そこには建築?物がある。/, function() {
       }
     })
   } else {
-    assert.fail('建築物が見つかりませんでした。')
+    assert.fail('場所を特定できませんでした。')
   }
 })
 
