@@ -163,11 +163,6 @@ const textToLngLat = async (text) => {
   let lng = 0
   let lat = 0
 
-  const isAddress = getAddressFromText(text);
-  if (isAddress) {
-    return  await addressToLngLat(isAddress)
-  }
-
   match = text.match(/緯度.*?(\-?[0-9]+\.?[0-9]+).*?経度.*?(\-?[0-9]+\.?[0-9]+)/)
   if (match) {
     lng = match[2]
@@ -177,6 +172,13 @@ const textToLngLat = async (text) => {
     if (match) {
       lng = match[2]
       lat = match[1]
+    }
+  }
+
+  if (0 === lng && 0 === lat) {
+    const match = text.match(/「(.*?)」/) || text.match(/"(.*?)"/)
+    if (match) {
+      [lng, lat] = await addressToLngLat(match[1].trim())
     }
   }
 
@@ -191,26 +193,6 @@ const getLocations = (object) => {
   return object.locations
 }
 
-/**
- * テキストから「」もしくは、"" で囲われた住所を抽出する
- * @param {*} text
- * @returns
- */
-const getAddressFromText = (text) => {
-
-  const address = text.match(/「(.*?)」/) || text.match(/"(.*?)"/)
-
-  const isLonLat = text.match(/,|\/|緯度|経度/)
-  if (isLonLat) {
-    return ''
-  }
-
-  if (address) {
-    return address[1]
-  }
-  return ''
-}
-
 module.exports = {
   lnglatToTile,
   getTile,
@@ -219,5 +201,4 @@ module.exports = {
   getLocations,
   addressToLngLat,
   getTakamatsuHazard,
-  getAddressFromText
 }
