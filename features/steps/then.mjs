@@ -10,7 +10,7 @@ Then(/^現在の座標は(.+?)であるべきである。$/, async function(text
   assert.deepStrictEqual(current, expected)
 });
 
-Then(/そこには建築物がある。/, function() {
+Then(/そこには建築?物がある。/, function() {
   let result = false
 
   const current = getLocations(this).slice(-1)[0]
@@ -28,15 +28,15 @@ Then(/そこには建築物がある。/, function() {
       }
 
       if (false === result) {
-        throw new Error('建築物が見つかりませんでした。')
+        assert.fail('建築物が見つかりませんでした。')
       }
     })
   } else {
-    throw new Error('建築物が見つかりませんでした。')
+    assert.fail('建築物が見つかりませんでした。')
   }
 })
 
-Then(/そこには建築物がない。/, function() {
+Then(/そこには建築?物がない。/, function() {
   let result = false
 
   const current = getLocations(this).slice(-1)[0]
@@ -54,7 +54,7 @@ Then(/そこには建築物がない。/, function() {
       }
 
       if (true === result) {
-        throw new Error('建築物があります。')
+        assert.fail('建築物があります。')
       }
     })
   }
