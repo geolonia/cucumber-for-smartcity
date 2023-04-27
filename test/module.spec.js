@@ -1,5 +1,5 @@
 const assert = require('assert')
-const { lnglatToTile, getTile, textToLngLat, addressToLngLat, getAddressFromText } = require('../features/support/module')
+const { lnglatToTile, getTile, textToLngLat, addressToLngLat, getAddressFromText, getTakamatsuHazard } = require('../features/support/module')
 
 describe('Tests for lnglatToTile()', () => {
   it('should return tile number as expected', () => {
@@ -94,6 +94,52 @@ describe('Tests for addressToLngLat()', () => {
     assert.deepStrictEqual(result, expected);
   });
 });
+
+describe('getTakamatsuHazard', () => {
+
+  it('should return expected feature', async () => {
+
+    const expected = [
+      {
+        "suisin": 1.27,
+        "x": 51105,
+        "y": 150535,
+        "vt_layer": "高潮浸水想定区域図（想定最大規模）"
+      },
+      {
+        "keizoku": 1,
+        "vt_layer": "高潮浸水想定区域図（浸水継続時間）"
+      }
+    ]
+
+    const lng = 134.0555496
+    const lat = 34.3560728
+
+    const result = await getTakamatsuHazard(lng, lat)
+    assert.deepStrictEqual(result, expected)
+  })
+
+  it('should return layers with expected layers', async () => {
+
+    const expected = [
+      "土砂災害警戒区域",
+      "急傾斜地崩壊危険区域",
+      "急傾斜地崩壊危険箇所",
+      "洪水浸水想定区域図（想定最大規模）",
+      "洪水浸水想定区域図（浸水継続時間）",
+      "高潮浸水想定区域図（想定最大規模）",
+      "高潮浸水想定区域図（浸水継続時間）"
+    ]
+
+    const lng = 134.0918781
+    const lat = 34.3598964
+
+    const res = await getTakamatsuHazard(lng, lat)
+    const result = res.map(properties => properties.vt_layer)
+
+    assert.deepStrictEqual(result.sort(), expected.sort())
+  })
+})
 
 describe('getAddressFromText', () => {
   it('should return an array with the address surrounded by 「」', () => {
