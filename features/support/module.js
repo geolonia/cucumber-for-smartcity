@@ -111,12 +111,12 @@ const getTakamatsuHazard = async (lng, lat) => {
 
   const header = {
     headers: {
-      'Origin': 'http://localhost:3000',
+      'Origin': process.env.ORIGIN,
     },
   }
 
   const tile = lnglatToTile(lng, lat, 20)
-  const tileUrl = 'https://tileserver.geolonia.com/takamatsu-hazard_v3/tiles/{z}/{x}/{y}.pbf?key=YOUR-API-KEY'
+  const tileUrl = `https://tileserver.geolonia.com/takamatsu-hazard_v3/tiles/{z}/{x}/{y}.pbf?key=${process.env.API_KEY}`
 
   const geojsons = await getTile(tileUrl, ...tile, header)
 
