@@ -21,8 +21,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Make the directory
-        run: mkdir -p docs
       - name: Install dependencies
         run: npm install
 
@@ -30,12 +28,4 @@ jobs:
         run: npm run test:mocha
 
       - name: Run BBD tests
-        run: npm test -- -f html > docs/index.html
-
-      - name: Deploy the app to `gh-pages`
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: docs
-          publish_branch: gh-pages
-          force_orphan: true
+        run: npm test
