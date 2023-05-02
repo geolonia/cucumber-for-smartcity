@@ -1,4 +1,4 @@
-# bbd-for-smartcity
+# Cucumber for SmartCity
 
 ```
 $ git clone git@github.com:miya0001/bbd-for-smartcity.git
