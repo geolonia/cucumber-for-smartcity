@@ -1,6 +1,6 @@
 # Cucumber for SmartCity
 
-このプロジェクトは、Gherkin Syntax を使ってデジタルツインを実装することができないかについて実験をするための PoC です。
+このプロジェクトは、Gherkin Syntax を使った都市のシュミレーションについての実験です。
 
 ## Gherkin Syntax とは？
 
@@ -25,8 +25,6 @@ Feature: 災害リスクの有無のテスト
 Cucumber とは、Gherkin Syntax を用いたテストを行うためのオープンソースのフレームワークです。
 
 https://github.com/cucumber/cucumber-js/
-
-
 
 # 開発方法
 
