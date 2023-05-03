@@ -17,18 +17,22 @@ Then(/^(そ|こ)こは(.+?)(都|道|府|県)(.+?)?(市|区|町|村)?で(ある|�
 
   const current = getLocations(this).slice(-1)[0]
 
-  return openReverseGeocoder(current).then((response) => {
-    const reg = new RegExp(`^${expected}`)
-    const place = `${response.prefecture}${response.city}`
+  if (current.length) {
+    return openReverseGeocoder(current).then((response) => {
+      const reg = new RegExp(`^${expected}`)
+      const place = `${response.prefecture}${response.city}`
 
-    if (place.match(reg)) {
-      result = true
-    }
+      if (place.match(reg)) {
+        result = true
+      }
 
-    if (('ある' === existance && false === result) || ('はない' === existance && true === result)) {
-      assert.fail(`ここは${place}です。`)
-    }
-  })
+      if (('ある' === existance && false === result) || ('はない' === existance && true === result)) {
+        assert.fail(`ここは${place}です。`)
+      }
+    })
+  } else if ('ある' === existance) {
+    assert.fail('場所を特定できませんでした。')
+  }
 });
 
 Then(/^(そこに|それ)は(建築?物|普通建物|堅ろう建物|堅牢建物|高層建物)(が|で)(ある|は?ない)。$/, function(dummy1, name, dummy2, existance) {
