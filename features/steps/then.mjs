@@ -10,7 +10,7 @@ Then(/^現在の座標は(.+?)であるべきである。$/, async function(text
   assert.deepStrictEqual(current, expected)
 });
 
-Then(/そこには(建築?物|普通建物|堅ろう建物|堅牢建物|高層建物)が(ある|ない)。/, function(name, existance) {
+Then(/(そこに|それ)は(建築?物|普通建物|堅ろう建物|堅牢建物|高層建物)(が|で)(ある|は?ない)。/, function(dummy1, name, dummy2, existance) {
   let result = false
 
   const current = getLocations(this).slice(-1)[0]
@@ -50,9 +50,9 @@ Then(/そこには(建築?物|普通建物|堅ろう建物|堅牢建物|高層�
       }
 
       if ('ある' === existance && false === result) {
-        assert.fail('建築物が見つかりませんでした。')
+        assert.fail(`${name}が見つかりませんでした。`)
       } else if ('ない' === existance && true === result) {
-        assert.fail('建築物が見つかりました。')
+        assert.fail(`${name}があります。`)
       }
     })
   } else if ('ある' === existance) {
