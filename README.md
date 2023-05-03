@@ -23,6 +23,10 @@ Feature: 災害リスクの有無のテスト（高松市内のみ）
     And  そこには災害リスクがある。
 ```
 
+サンプルのテストは以下の URL にあります。
+
+https://github.com/geolonia/cucumber-for-smartcity/blob/main/features/example.feature
+
 ## Cucumber とは？
 
 Cucumber とは、Gherkin Syntax を用いたテストを行うためのオープンソースのフレームワークです。
