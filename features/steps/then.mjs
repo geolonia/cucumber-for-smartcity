@@ -2,6 +2,7 @@ import assert, { rejects } from 'assert'
 import { Then } from '@cucumber/cucumber'
 import { getLocations, textToLngLat, lnglatToTile, getTile, getTakamatsuHazard } from '../support/module.js'
 import { geoContains } from 'd3-geo'
+import { openReverseGeocoder } from "@geolonia/open-reverse-geocoder"
 
 Then(/^現在の座標は(.+?)であるべきである。$/, async function(text) {
   const expected = await textToLngLat(text)
@@ -10,7 +11,27 @@ Then(/^現在の座標は(.+?)であるべきである。$/, async function(text
   assert.deepStrictEqual(current, expected)
 });
 
-Then(/(そこに|それ)は(建築?物|普通建物|堅ろう建物|堅牢建物|高層建物)(が|で)(ある|は?ない)。/, function(dummy1, name, dummy2, existance) {
+Then(/^(そ|こ)こは(.+?)(都|道|府|県)(.+?)?(市|区|町|村)?で(ある|はない)。$/, async function(dummy, pref, prefSuffix, city, citySuffix, existance) {
+  const expected = `${pref}${prefSuffix}${city || ''}${citySuffix || ''}`
+  let result = false
+
+  const current = getLocations(this).slice(-1)[0]
+
+  return openReverseGeocoder(current).then((response) => {
+    const reg = new RegExp(`^${expected}`)
+    const place = `${response.prefecture}${response.city}`
+
+    if (place.match(reg)) {
+      result = true
+    }
+
+    if (('ある' === existance && false === result) || ('はない' === existance && true === result)) {
+      assert.fail(`ここは${place}です。`)
+    }
+  })
+});
+
+Then(/^(そこに|それ)は(建築?物|普通建物|堅ろう建物|堅牢建物|高層建物)(が|で)(ある|は?ない)。$/, function(dummy1, name, dummy2, existance) {
   let result = false
 
   const current = getLocations(this).slice(-1)[0]
@@ -60,7 +81,7 @@ Then(/(そこに|それ)は(建築?物|普通建物|堅ろう建物|堅牢建物
   }
 })
 
-Then(/そこには災害リスクがある。/, function() {
+Then(/^そこには災害リスクがある。$/, function() {
   let result = false
 
   const current = getLocations(this).slice(-1)[0]
@@ -80,7 +101,7 @@ Then(/そこには災害リスクがある。/, function() {
   }
 })
 
-Then(/そこには災害リスクがない。/, function() {
+Then(/^そこには災害リスクがない。$/, function() {
   let result = false
 
   const current = getLocations(this).slice(-1)[0]
